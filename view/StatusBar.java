@@ -75,7 +75,7 @@ public class StatusBar {
     }
     public void updateDegreeLabel(Node node){
         if(node != null)
-            nodeDegree.setText(NODE_DEGREE + graphController.degreeOf(node));
+            nodeDegree.setText(NODE_DEGREE + graphController.outDegreeOf(node));
         else
             nodeDegree.setText("");
     }

@@ -16,7 +16,7 @@ import static view.DrawnNode.CIRCLE_RADIUS;
 public class DrawnArc {
     private static final Bloom BLOOM = new Bloom(0);
 
-    private static final int LOOP_RADIUS = 50;
+    private static final int LOOP_RADIUS = 20;
     private static final int LINE_WIDTH = 3;
     private static final int ARROW_SIDE = CIRCLE_RADIUS;
     private static final int ARROW_SIDE_TO_HEIGHT_ANGLE = 20;
@@ -31,7 +31,7 @@ public class DrawnArc {
 
     private Polygon arrow;
     private Line line;
-    private CubicCurve loop;
+    private Circle loop;
 
     // Properties for arrow correct rotating and locating
     private double headX;
@@ -62,7 +62,7 @@ public class DrawnArc {
         arrow = new Polygon();
 
         if (begin.getSourceNode().equals(end.getSourceNode())) {
-            loop = new CubicCurve();
+            loop = new Circle(LOOP_RADIUS);
             configureLoop();
 
             line = new Line();
@@ -75,7 +75,7 @@ public class DrawnArc {
             );
             configureLine();
 
-            loop = new CubicCurve();
+            loop = new Circle();
         } else {
             line = new Line(
                     begin.getShape().getCenterX(), begin.getShape().getCenterY(),
@@ -83,7 +83,7 @@ public class DrawnArc {
             );
             configureLine();
 
-            loop = new CubicCurve();
+            loop = new Circle();
         }
     }
 
@@ -103,7 +103,7 @@ public class DrawnArc {
         return line;
     }
 
-    public CubicCurve getLoop() {
+    public Circle getLoop() {
         return loop;
     }
 
@@ -159,16 +159,16 @@ public class DrawnArc {
         loop.setFill(Color.TRANSPARENT);
         loop.setStroke(Color.BLACK);
 
-//        loop.centerXProperty().bind(begin.getShape().centerXProperty().add(-CIRCLE_RADIUS-10));
-//        loop.centerYProperty().bind(begin.getShape().centerYProperty());
-        loop.startXProperty().bind(begin.getShape().centerXProperty().add(-5.071));
-        loop.startYProperty().bind(begin.getShape().centerYProperty().add(-9.071));
-        loop.endXProperty().bind(end.getShape().centerXProperty().add(-5.071));
-        loop.endYProperty().bind(end.getShape().centerYProperty().add(9.071));
-        loop.controlX1Property().bind(begin.getShape().centerXProperty().add(-LOOP_RADIUS));
-        loop.controlY1Property().bind(begin.getShape().centerYProperty().add(-LOOP_RADIUS));
-        loop.controlX2Property().bind(end.getShape().centerXProperty().add(-LOOP_RADIUS));
-        loop.controlY2Property().bind(end.getShape().centerYProperty().add(LOOP_RADIUS));
+        loop.centerXProperty().bind(begin.getShape().centerXProperty().add(-CIRCLE_RADIUS-10));
+        loop.centerYProperty().bind(begin.getShape().centerYProperty());
+//        loop.startXProperty().bind(begin.getShape().centerXProperty().add(-5.071));
+//        loop.startYProperty().bind(begin.getShape().centerYProperty().add(-9.071));
+//        loop.endXProperty().bind(end.getShape().centerXProperty().add(-5.071));
+//        loop.endYProperty().bind(end.getShape().centerYProperty().add(9.071));
+//        loop.controlX1Property().bind(begin.getShape().centerXProperty().add(-LOOP_RADIUS));
+//        loop.controlY1Property().bind(begin.getShape().centerYProperty().add(-LOOP_RADIUS));
+//        loop.controlX2Property().bind(end.getShape().centerXProperty().add(-LOOP_RADIUS));
+//        loop.controlY2Property().bind(end.getShape().centerYProperty().add(LOOP_RADIUS));
 
         // Line lightning when mouse entered
         loop.setOnMouseEntered(e -> {
@@ -244,8 +244,8 @@ public class DrawnArc {
                 : end.getShape().getCenterY() + headYMod;
 
         // sin (90 - a - y) = cos a * COS_Y - sin a * SIN_Y &&& cos (90 - a - y) = sin a * COS_Y + cos a * SIN_Y =>>>
-        rightXMod = ARROW_SIDE * (cos * COS_Y - sin * SIN_Y);
-        rightYMod = ARROW_SIDE * (sin * COS_Y + cos * SIN_Y);
+        rightXMod = ARROW_SIDE * (cos * COS_Y - sin * SIN_Y)*1.5;
+        rightYMod = ARROW_SIDE * (sin * COS_Y + cos * SIN_Y)*1.5;
 
         rightX = end.getShape().getCenterX() > begin.getShape().getCenterX() ?
                 headX - rightXMod
@@ -255,8 +255,8 @@ public class DrawnArc {
                 : headY + rightYMod;
 
         //  cos (a - y) = cos a * COS_Y + sin a * SIN_Y &&& sin (a - y) = sin a * COS_Y - cos a * SIN_Y
-        leftXMod = ARROW_SIDE * (cos * COS_Y + sin * SIN_Y);
-        leftYMod = ARROW_SIDE * (sin * COS_Y - cos * SIN_Y);
+        leftXMod = ARROW_SIDE * (cos * COS_Y + sin * SIN_Y)*1.5;
+        leftYMod = ARROW_SIDE * (sin * COS_Y - cos * SIN_Y)*1.5;
 
         leftX = end.getShape().getCenterX() > begin.getShape().getCenterX() ?
                 headX - leftXMod

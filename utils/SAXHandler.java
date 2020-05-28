@@ -160,7 +160,7 @@ public class SAXHandler extends DefaultHandler {
                 bisDirect = false;
             }
             if(bArcColor){
-                arcColor = Color.web(data.toString());
+                arcColor = data.toString().equals("null")?Color.BLACK:Color.web(data.toString());
                 bArcColor = false;
             }
         }

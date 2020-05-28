@@ -72,13 +72,25 @@ public class GraphController {
 
 
     //degree of node
-    public int degreeOf(Node node){
+    public int outDegreeOf(Node node){
         int degree = 0;
 
         for(Arc arc: graph.getArcs()){
             if(arc.getBeginVertex().equals(node))
                 degree++;
             else if(arc.getEndVertex().equals(node) && !arc.isDirect())
+                degree++;
+        }
+
+        return degree;
+    }
+
+    //degree of node
+    public int inDegreeOf(Node node){
+        int degree = 0;
+
+        for(Arc arc: graph.getArcs()){
+            if(arc.getEndVertex().equals(node) && arc.isDirect())
                 degree++;
         }
 
@@ -102,8 +114,14 @@ public class GraphController {
                     continue;
                 }
 
-                if (!graph.getArcs().contains(new Arc(begin, end,true))) {
-                    graph.getArcs().add(new Arc(begin, end,true));
+                if (!graph.getArcs().contains(graph.getArc(begin,end))) {
+                    if(graph.getArcs().contains(graph.getArc(end,begin))){
+                        if(graph.getArc(end,begin).isDirect()){
+                            graph.getArcs().add(new Arc(begin, end,true));
+                        }
+                    }else{
+                        graph.getArcs().add(new Arc(begin, end,true));
+                    }
                 }
             }
         }
@@ -111,37 +129,40 @@ public class GraphController {
         for (Arc arc : graph.getArcs()) {
             if (arc.getBeginVertex().equals(arc.getEndVertex())) {
                 arcsToDelete.add(arc);
-                continue;
             }
-
-            arc.setDirected(false);
         }
 
         graph.getArcs().removeAll(arcsToDelete);
     }
 
     //find Euler path ( use with checkForEulerCycle() )
-    public Path findEulerPath(Node node, Path path, IncidenceMatrix matrix){
-        path.getPath().add(node);
+    public Path findEulerPath(Node node, Path path, int[][] matrix){
         for(Arc arc : graph.getArcs()){
-            if(matrix.getMatrix()[graph.getNodes().indexOf(node)][graph.getArcs().indexOf(arc)] != 0) {
+            if(matrix[graph.getNodes().indexOf(node)][graph.getArcs().indexOf(arc)] != 0) {
                 int i = graph.getNodes().indexOf(arc.getBeginVertex());
                 int j = graph.getNodes().indexOf(arc.getEndVertex());
                 int m = graph.getArcs().indexOf(arc);
-                matrix.getMatrix()[i][m] = 0;
-                matrix.getMatrix()[j][m] = 0;
-                if(arc.getBeginVertex().equals(node))
+                if(!arc.isDirect()){
+                    matrix[i][m] = 0;
+                    matrix[j][m] = 0;
+                    if(arc.getBeginVertex().equals(node))
+                        findEulerPath(arc.getEndVertex(), path, matrix);
+                    else if(arc.getEndVertex().equals(node))
+                        findEulerPath(arc.getBeginVertex(), path, matrix);
+                }else if(arc.isDirect() && arc.getBeginVertex().equals(node)){
+                    matrix[i][m] = 0;
+                    matrix[j][m] = 0;
                     findEulerPath(arc.getEndVertex(), path, matrix);
-                else if(arc.getEndVertex().equals(node))
-                    findEulerPath(arc.getBeginVertex(), path, matrix);
+                }
             }
         }
+        path.getPath().add(node);
         return path;
     }
     //check for Euler cycle
     public boolean checkForEulerCycle(){
         for(Node node: graph.getNodes()){
-            if(degreeOf(node) % 2 != 0) return false;
+            if((outDegreeOf(node)-inDegreeOf(node)) % 2 != 0) return false;
         }
         return true;
     }

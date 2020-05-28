@@ -153,7 +153,7 @@ public class MainWindow {
         List<Arc> arcs = graphTabBar.currentGraphPane().getGraphController().getArcs();
         Map <Node,Integer> degrees = new HashMap<>();
         for(Node node: nodes){
-            degrees.put(node,graphTabBar.currentGraphPane().getGraphController().degreeOf(node));
+            degrees.put(node,graphTabBar.currentGraphPane().getGraphController().outDegreeOf(node));
         }
         IncidenceMatrix matrix = graphTabBar.currentGraphPane().getGraphController().getIncidenceMatrix();
         String isCompleted = graphTabBar.currentGraphPane().getGraphController().isComplete() ? "The graph is complete" : "The graph isn't complete";
@@ -185,7 +185,9 @@ public class MainWindow {
         currentGraphPane.getGraphController().makeComplete();
 
         for (Arc arc : currentGraphPane.getGraphController().getArcs()) {
-            DrawnArc newInverse = new DrawnArc(
+            DrawnArc newInverse = new DrawnArc(arc.isDirect() ?
+                    new Arc(arc.getEndVertex(), arc.getBeginVertex(),
+                            true):
                     new Arc(arc.getEndVertex(), arc.getBeginVertex(),
                             false),
                     new DrawnNode(arc.getEndVertex()),
@@ -197,7 +199,7 @@ public class MainWindow {
                         .get(currentGraphPane.getDrawnArcs().indexOf(newInverse));
 
                 currentGraphPane.getPane().getChildren()
-                        .remove(inverseFound.getArrow()); // kaef
+                        .remove(inverseFound.getArrow());
 
                 continue;
             }
@@ -215,7 +217,7 @@ public class MainWindow {
                 continue;
             }
 
-            currentGraphPane.getPane().getChildren().add(newPrime.getLine());
+            currentGraphPane.getPane().getChildren().addAll(newPrime.getLine(),newPrime.getArrow());
             currentGraphPane.getDrawnArcs().add(newPrime);
         }
 
@@ -229,10 +231,11 @@ public class MainWindow {
             ArrayList<Path> paths = new ArrayList<>();
             for(Node node: graphTabBar.currentGraphPane().getGraphController().getNodes()){
                 IncidenceMatrix matrix = new IncidenceMatrix(graphTabBar.currentGraphPane().getGraphController().getGraph());
-                paths.add(graphTabBar.currentGraphPane().getGraphController().findEulerPath(node,new Path(),matrix));
+                paths.add(graphTabBar.currentGraphPane().getGraphController().findEulerPath(node,new Path(),matrix.getMatrix()));
             }
             String result = "Euler cycles: " + "\n";
             for(Path path: paths){
+                if(path.getPath().get(0).equals(path.getPath().get(path.getPath().size()-1)))
                 result = result.concat(path + "\n");
             }
             Alert eulerDialog = createEmptyDialog(new Label(result), "Euler cycle");
