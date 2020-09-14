@@ -101,7 +101,15 @@ public class GraphController {
 
     //check for graph complete
     public boolean isComplete(){
-        return !graph.containsLoop() && (graph.getArcs().size() == graph.getNodes().size() * (graph.getNodes().size() - 1));
+        if(graph.containsLoop()){
+            return false;
+        }
+        for(Node node: graph.getNodes()){
+            if(outDegreeOf(node) != graph.getNodes().size() - 1){
+                return false;
+            }
+        }
+        return true;
     }
 
     //make graph complete

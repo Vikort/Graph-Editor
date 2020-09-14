@@ -59,7 +59,7 @@ public class SAXHandler extends DefaultHandler {
 
         for (DrawnArc drawnArc : arcs) {
             graph.getArcs().add(drawnArc.getSourceArc());
-            graphPane.getPane().getChildren().addAll(drawnArc.getLine(), drawnArc.getArrow());
+            graphPane.getPane().getChildren().addAll(drawnArc.getLoop(),drawnArc.getLine(), drawnArc.getArrow());
         }
 
         for (DrawnNode drawnNode : nodes) {

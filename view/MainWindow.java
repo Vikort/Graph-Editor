@@ -22,7 +22,7 @@ import static view.DrawnNode.CIRCLE_RADIUS;
 
 public class MainWindow {
     private MenuBar menuBar;
-    private GraphTabBar graphTabBar;
+    private TabBar tabBar;
     private GraphToolBar graphToolBar;
     private StatusBar statusBar;
     private Stage stage;
@@ -34,7 +34,7 @@ public class MainWindow {
         configureMenu();
         graphToolBar = new GraphToolBar();
         statusBar = new StatusBar();
-        graphTabBar = new GraphTabBar(graphToolBar, statusBar);
+        tabBar = new TabBar(graphToolBar, statusBar);
         this.stage = stage;
         root = new VBox();
         configureVBox();
@@ -48,7 +48,7 @@ public class MainWindow {
         root.getChildren().addAll(
                 menuBar,
                 graphToolBar.getToolBar(),
-                graphTabBar.getTabPane(),
+                tabBar.getTabPane(),
                 statusBar.getStatusBar()
         );
     }
@@ -112,7 +112,7 @@ public class MainWindow {
             Graph newGraph = new Graph(name.getText());
 
             if (!isGraphAlreadyExist(newGraph.getName())) {
-                graphTabBar.newTab(newGraph);
+                tabBar.newTab(newGraph);
             } else {
                 newGraphDialog.show();
             }
@@ -127,7 +127,7 @@ public class MainWindow {
 
         if (selectedFile != null) {
             MyFileHandler fileHandler = new MyFileHandler();
-            fileHandler.setGraphPane(graphTabBar.currentGraphPane());
+            fileHandler.setGraphPane(tabBar.currentGraphPane());
             fileHandler.saveFile(selectedFile);
         }
     };
@@ -142,21 +142,21 @@ public class MainWindow {
             GraphPane namedGraphPane = fileHandler.getGraphPane();
 
             if (!isGraphAlreadyExist(namedGraphPane.getGraphController().getGraph().getName())) {
-                graphTabBar.newTab(namedGraphPane);
+                tabBar.newTab(namedGraphPane);
             }
         }
     };
 
     private EventHandler<ActionEvent> infoEventHandler = e -> {
-        String graphName = graphTabBar.currentGraphPane().getGraphController().getGraph().getName();
-        List<Node> nodes = graphTabBar.currentGraphPane().getGraphController().getNodes();
-        List<Arc> arcs = graphTabBar.currentGraphPane().getGraphController().getArcs();
+        String graphName = tabBar.currentGraphPane().getGraphController().getGraph().getName();
+        List<Node> nodes = tabBar.currentGraphPane().getGraphController().getNodes();
+        List<Arc> arcs = tabBar.currentGraphPane().getGraphController().getArcs();
         Map <Node,Integer> degrees = new HashMap<>();
         for(Node node: nodes){
-            degrees.put(node,graphTabBar.currentGraphPane().getGraphController().outDegreeOf(node));
+            degrees.put(node, tabBar.currentGraphPane().getGraphController().outDegreeOf(node));
         }
-        IncidenceMatrix matrix = graphTabBar.currentGraphPane().getGraphController().getIncidenceMatrix();
-        String isCompleted = graphTabBar.currentGraphPane().getGraphController().isComplete() ? "The graph is complete" : "The graph isn't complete";
+        IncidenceMatrix matrix = tabBar.currentGraphPane().getGraphController().getIncidenceMatrix();
+        String isCompleted = tabBar.currentGraphPane().getGraphController().isComplete() ? "The graph is complete" : "The graph isn't complete";
         String result = graphName + "\nNodes:\n";
         for(Node node: nodes){
             result = result.concat(node + "\n");
@@ -180,7 +180,7 @@ public class MainWindow {
 
     // Making graph complete
     private EventHandler<ActionEvent> makeCompleteEventHandler = e -> {
-        GraphPane currentGraphPane = graphTabBar.currentGraphPane();
+        GraphPane currentGraphPane = tabBar.currentGraphPane();
         currentGraphPane.removeLoops();
         currentGraphPane.getGraphController().makeComplete();
 
@@ -227,11 +227,11 @@ public class MainWindow {
     };
 
     private EventHandler<ActionEvent> eulerEventHandler = e -> {
-        if(graphTabBar.currentGraphPane().getGraphController().checkForEulerCycle()){
+        if(tabBar.currentGraphPane().getGraphController().checkForEulerCycle()){
             ArrayList<Path> paths = new ArrayList<>();
-            for(Node node: graphTabBar.currentGraphPane().getGraphController().getNodes()){
-                IncidenceMatrix matrix = new IncidenceMatrix(graphTabBar.currentGraphPane().getGraphController().getGraph());
-                paths.add(graphTabBar.currentGraphPane().getGraphController().findEulerPath(node,new Path(),matrix.getMatrix()));
+            for(Node node: tabBar.currentGraphPane().getGraphController().getNodes()){
+                IncidenceMatrix matrix = new IncidenceMatrix(tabBar.currentGraphPane().getGraphController().getGraph());
+                paths.add(tabBar.currentGraphPane().getGraphController().findEulerPath(node,new Path(),matrix.getMatrix()));
             }
             String result = "Euler cycles: " + "\n";
             for(Path path: paths){
@@ -254,7 +254,7 @@ public class MainWindow {
         ComboBox<String> firstNodeName = new ComboBox<>();
         ComboBox<String> secondNodeName = new ComboBox<>();
 
-        for (DrawnNode drawnNode : graphTabBar.currentGraphPane().getDrawnNodes()) {
+        for (DrawnNode drawnNode : tabBar.currentGraphPane().getDrawnNodes()) {
             firstNodeName.getItems().add(drawnNode.getSourceNode().toString());
             secondNodeName.getItems().add(drawnNode.getSourceNode().toString());
         }
@@ -276,7 +276,7 @@ public class MainWindow {
             Node begin = new Node();
             Node end = new Node();
 
-            for (DrawnNode drawnNode : graphTabBar.currentGraphPane().getDrawnNodes()) {
+            for (DrawnNode drawnNode : tabBar.currentGraphPane().getDrawnNodes()) {
                 if (drawnNode.getSourceNode().toString().equals(
                         firstNodeName.getSelectionModel().getSelectedItem())) {
                     begin = drawnNode.getSourceNode();
@@ -288,11 +288,11 @@ public class MainWindow {
                 }
             }
 
-            graphTabBar.currentGraphPane().getGraphController().findDistancePaths(begin,end);
-            List<Path> paths = graphTabBar.currentGraphPane().getGraphController().getChains();
+            tabBar.currentGraphPane().getGraphController().findDistancePaths(begin,end);
+            List<Path> paths = tabBar.currentGraphPane().getGraphController().getChains();
 
             Label distanceText = new Label();
-            Path minPath = graphTabBar.currentGraphPane().getGraphController().getMinPath();
+            Path minPath = tabBar.currentGraphPane().getGraphController().getMinPath();
             String result = "Paths between " + begin + " and " + end + " is " + "\n";
 
             for(Path path: paths){
@@ -314,7 +314,7 @@ public class MainWindow {
         ComboBox<String> firstNodeName = new ComboBox<>();
         ComboBox<String> secondNodeName = new ComboBox<>();
 
-        for (DrawnNode drawnNode : graphTabBar.currentGraphPane().getDrawnNodes()) {
+        for (DrawnNode drawnNode : tabBar.currentGraphPane().getDrawnNodes()) {
             firstNodeName.getItems().add(drawnNode.getSourceNode().toString());
             secondNodeName.getItems().add(drawnNode.getSourceNode().toString());
         }
@@ -336,7 +336,7 @@ public class MainWindow {
             Node begin = new Node();
             Node end = new Node();
 
-            for (DrawnNode drawnNode : graphTabBar.currentGraphPane().getDrawnNodes()) {
+            for (DrawnNode drawnNode : tabBar.currentGraphPane().getDrawnNodes()) {
                 if (drawnNode.getSourceNode().toString().equals(
                         firstNodeName.getSelectionModel().getSelectedItem())) {
                     begin = drawnNode.getSourceNode();
@@ -348,9 +348,9 @@ public class MainWindow {
                 }
             }
 
-            graphTabBar.currentGraphPane().getGraphController().findDistancePaths(begin,end);
-            Integer distance = graphTabBar.currentGraphPane().getGraphController().getDistance();
-            Path path = graphTabBar.currentGraphPane().getGraphController().getMinPath();
+            tabBar.currentGraphPane().getGraphController().findDistancePaths(begin,end);
+            Integer distance = tabBar.currentGraphPane().getGraphController().getDistance();
+            Path path = tabBar.currentGraphPane().getGraphController().getMinPath();
 
             Label distanceText = new Label();
             distanceText.setText("Distance between " + begin + " and " + end + " is " + distance + "\n" +
@@ -385,7 +385,7 @@ public class MainWindow {
     }
 
     private boolean isGraphAlreadyExist(String name) {
-        for (Tab tab : graphTabBar.getManagingGraphs().keySet()) {
+        for (Tab tab : tabBar.getManagingGraphs().keySet()) {
             if (tab.getText().equals(name)) {
                 Alert error = createEmptyDialog(new Label("Such graph is already exists"), "Error");
 

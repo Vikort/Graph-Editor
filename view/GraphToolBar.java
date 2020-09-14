@@ -22,7 +22,7 @@ public class GraphToolBar {
     private Button color;
     private Button delete;
 
-    private ToolBar toolBar;
+    private javafx.scene.control.ToolBar toolBar;
 
 
     public GraphToolBar() {
@@ -35,11 +35,11 @@ public class GraphToolBar {
         color = new Button();
         delete = new Button();
 
-        toolBar = new ToolBar();
+        toolBar = new javafx.scene.control.ToolBar();
         configureToolBar();
     }
 
-    public ToolBar getToolBar() {
+    public javafx.scene.control.ToolBar getToolBar() {
         return toolBar;
     }
 

@@ -62,7 +62,7 @@ public class DrawnNode {
         shape.setStrokeType(StrokeType.OUTSIDE);
         shape.setStrokeWidth(3);
         shape.setStroke(Color.BLACK);
-        shape.setFill(Color.TRANSPARENT);
+        shape.setFill(Color.WHITE);
 
         // Node moving
         shape.setOnMouseDragged(e -> {
